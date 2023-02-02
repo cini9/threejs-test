@@ -3,12 +3,13 @@ import { useGLTF, useScroll } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from 'three'
 
-export function Helmet() {
+export function Helmet({ scrollPos }) {
   const helmetGroup = useRef();
   const opaqueGroup = useRef()
-  const { nodes, materials } = useGLTF("/BM_All.glb");
+  const membraneRef = useRef();
+  const padRef = useRef()
 
-  const scroll = useScroll()
+  const { nodes, materials } = useGLTF("/BM_All.glb");
 
   const helmetMaterials = useMemo(() => {
     const newMaterials = {}
@@ -18,60 +19,51 @@ export function Helmet() {
     return newMaterials
   }, [materials])
 
-
   useFrame(() => {
-    const r1 = scroll.range(0, 1 / 6)
-    const r2 = scroll.range(1 / 6, 1 / 6)
-
-    if (scroll.visible(0, 1 / 6)) {
-      helmetGroup.current.rotation.y = Math.PI * r1 / 4
+    if (scrollPos.current < 1) {
+      helmetGroup.current.rotation.y = Math.PI * scrollPos.current / 4
     }
 
-    if (scroll.visible(1 / 6, 1 / 6)) {
-      opaqueGroup.current.children.forEach(child => child.material.opacity = 1 - r2)
+    if (scrollPos.current > 1 && scrollPos.current < 2) {
+      opaqueGroup.current.children.forEach(child => child.material.opacity = 1 - (scrollPos.current - 1))
     }
+
+    if (scrollPos.current > 2 && scrollPos.current < 3) {
+      membraneRef.current.material.color = new THREE.Color(3 - scrollPos.current, 0, 0)
+      padRef.current.material.color = new THREE.Color(0, 0, 4 - scrollPos.current)
+    }  
   })
 
   return (
-    <group ref={helmetGroup} scale={5}>
+    <group ref={helmetGroup} scale={5} position={[0, 0, 0]}>
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.BM_ElectronicsParts.geometry}
         material={helmetMaterials.BM_ElectronicsParts}
       />
+      <mesh
+        ref={membraneRef}
+        geometry={nodes.BM_Membrane.geometry}
+        material={helmetMaterials.BM_Membrane}
+      />
       <group ref={opaqueGroup}>
         <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.BM_Membrane.geometry}
-          material={helmetMaterials.BM_Membrane}
-        />
-        <mesh
-          castShadow
-          receiveShadow
           geometry={nodes["Hockey_Helmet_Bauer_Re-Akt006"].geometry}
           material={helmetMaterials.BM_HelmetScrews}
         />
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes["Hockey_Helmet_Bauer_Re-Akt006_1"].geometry}
           material={helmetMaterials.BM_HelmetPlastic}
         />
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes["Hockey_Helmet_Bauer_Re-Akt006_2"].geometry}
           material={helmetMaterials.BM_HelmetGlass}
         />
+        </group>
         <mesh
-          castShadow
-          receiveShadow
+        ref={padRef}
           geometry={nodes.BM_Pad.geometry}
           material={helmetMaterials.Bm_FoamPad}
         />
-      </group>
     </group>
   );
 }
