@@ -20,17 +20,17 @@ export function Helmet({ scrollPos }) {
   }, [materials])
 
   useFrame(() => {
-    if (scrollPos.current < 1) {
-      helmetGroup.current.rotation.y = Math.PI * scrollPos.current / 4
-    }
-
-    if (scrollPos.current > 1 && scrollPos.current < 2) {
-      opaqueGroup.current.children.forEach(child => child.material.opacity = 1 - (scrollPos.current - 1))
-    }
-
     if (scrollPos.current > 2 && scrollPos.current < 3) {
-      membraneRef.current.material.color = new THREE.Color(3 - scrollPos.current, 0, 0)
-      padRef.current.material.color = new THREE.Color(0, 0, 4 - scrollPos.current)
+      helmetGroup.current.rotation.y = Math.PI * (scrollPos.current - 2) / 4
+    }
+
+    if (scrollPos.current > 3 && scrollPos.current < 4) {
+      opaqueGroup.current.children.forEach(child => child.material.opacity = 1 - (scrollPos.current - 3))
+    }
+
+    if (scrollPos.current > 4 && scrollPos.current < 5) {
+      membraneRef.current.material.color = new THREE.Color(5 - scrollPos.current, 0, 0)
+      padRef.current.material.color = new THREE.Color(0, 0, 5 - scrollPos.current)
     }  
   })
 
