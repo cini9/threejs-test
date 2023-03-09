@@ -35,7 +35,7 @@ export function Helmet({ scrollPos }) {
   })
 
   return (
-    <group ref={helmetGroup} scale={5} position={[0, 0, 0]}>
+    <group ref={helmetGroup} scale={5} position={[2, 0, 0]}>
       <mesh
         geometry={nodes.BM_ElectronicsParts.geometry}
         material={helmetMaterials.BM_ElectronicsParts}
